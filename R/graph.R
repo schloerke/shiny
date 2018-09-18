@@ -267,7 +267,6 @@ RLog <- R6Class(
     exit = function(reactId, ctxId, type, returnObj, domain) {
       exitType <- "regular"
       returnObjNames <- names(returnObj)
-      str(returnObj)
       if (length(returnObjNames) == 3) {
         if (all(returnObjNames %in% c("message", "call", "type"))) {
           if (is.null(returnObj$type)) {
