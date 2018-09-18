@@ -47,8 +47,11 @@ Context <- R6Class(
         withReactiveDomain(.domain, {
           env <- .getReactiveEnvironment()
           rLog$enter(.reactId, id, .reactType, .domain)
-          on.exit(rLog$exit(.reactId, id, .reactType, .domain), add = TRUE)
-          env$runWith(self, func)
+          ret <- env$runWith(self, func)
+          on.exit({
+            rLog$exit(.reactId, id, .reactType, ret, .domain)
+          }, add = TRUE)
+          ret
         })
       })
     },

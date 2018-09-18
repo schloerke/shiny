@@ -77,7 +77,7 @@ ReactiveVal <- R6Class(
       private$dependents$register()
 
       if (private$frozen)
-        reactiveStop()
+        reactiveStop(class = "frozen")
 
       private$value
     },
@@ -346,7 +346,7 @@ ReactiveValues <- R6Class(
       }
 
       if (isFrozen(key))
-        reactiveStop()
+        reactiveStop(class = "frozen")
 
       keyValue
     },
