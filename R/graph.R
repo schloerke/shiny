@@ -264,24 +264,40 @@ RLog <- R6Class(
         ))
       }
     },
-    exit = function(reactId, ctxId, type, domain) {
+    exit = function(reactId, ctxId, type, returnObj, domain) {
+      exitType <- "regular"
+      returnObjNames <- names(returnObj)
+      if (length(returnObjNames) == 3) {
+        if (all(returnObjNames %in% c("message", "call", "type"))) {
+          if (is.null(returnObj$type)) {
+            exitType <- "error"
+          } else if (any(returnObj$type %in% "validation")) {
+            exitType <- "validation"
+          } else if (any(returnObj$type %in% "frozen")) {
+            exitType <- "frozen"
+          }
+        }
+      }
+
       ctxId <- self$ctxIdStr(ctxId)
       if (identical(type, "isolate")) {
         msg$depthDecrement()
-        msg$log("isolateExit: ", msg$reactStr(reactId), " in ", ctxId)
+        msg$log("isolateExit: ", msg$reactStr(reactId), " in ", ctxId, " - ", exitType)
         private$appendEntry(domain, list(
           action = "isolateExit",
           reactId = reactId,
-          ctxId = ctxId
+          ctxId = ctxId,
+          exitType = exitType
         ))
       } else {
         msg$depthDecrement()
-        msg$log("exit: ", msg$reactStr(reactId), " in ", ctxId, " - ", type)
+        msg$log("exit: ", msg$reactStr(reactId), " in ", ctxId, " - ", type, " - ", exitType)
         private$appendEntry(domain, list(
           action = "exit",
           reactId = reactId,
           ctxId = ctxId,
-          type = type
+          type = type,
+          exitType = exitType
         ))
       }
     },
